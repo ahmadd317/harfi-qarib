@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>حرفي قريب - جرمانا</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <span class="eyebrow">جرمانا والمناطق القريبة</span>
+      <h1>حرفي قريب</h1>
+    </div>
+    <div class="session">
+      <span id="currentUserLabel"></span>
+      <button class="button ghost hidden" id="logoutButton">تسجيل الخروج</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="authView" class="auth-layout">
+      <div class="hero card">
+        <span class="badge">نسخة تجريبية قابلة للاستخدام اليوم</span>
+        <h2>اطلب فني موثوق قريب منك</h2>
+        <p>أرسل طلبك، أضف صورة إن وجدت، واستقبل فنيين مناسبين من جرمانا.</p>
+        <div class="feature-grid">
+          <div><strong>01</strong><span>طلب واضح وسريع</span></div>
+          <div><strong>02</strong><span>فنيون موثقون</span></div>
+          <div><strong>03</strong><span>متابعة وتقييم</span></div>
+        </div>
+      </div>
+      <div class="card auth-card">
+        <div class="tabs">
+          <button class="tab active" data-auth-tab="login">تسجيل الدخول</button>
+          <button class="tab" data-auth-tab="register">حساب جديد</button>
+        </div>
+        <form id="loginForm" class="form">
+          <label>رقم الهاتف أو البريد
+            <input id="loginIdentifier" required placeholder="مثال: customer@example.com">
+          </label>
+          <label>كلمة المرور
+            <input id="loginPassword" type="password" required placeholder="123456">
+          </label>
+          <button class="button primary" type="submit">دخول</button>
+          <p class="hint">للتجربة: customer@example.com أو technician@example.com / 123456</p>
+        </form>
+        <form id="registerForm" class="form hidden">
+          <label>الاسم الكامل
+            <input id="registerName" required>
+          </label>
+          <label>رقم الهاتف
+            <input id="registerPhone" required placeholder="09xxxxxxxx">
+          </label>
+          <label>نوع الحساب
+            <select id="registerRole">
+              <option value="customer">زبون</option>
+              <option value="technician">فني</option>
+            </select>
+          </label>
+          <label>كلمة المرور
+            <input id="registerPassword" type="password" minlength="6" required>
+          </label>
+          <button class="button primary" type="submit">إنشاء الحساب</button>
+        </form>
+        <div id="authMessage" class="message hidden"></div>
+      </div>
+    </section>
+
+    <section id="customerView" class="hidden">
+      <div class="page-heading">
+        <div><span class="eyebrow">لوحة الزبون</span><h2>شو الخدمة اللي بدك ياها؟</h2></div>
+        <button class="button primary" id="newRequestButton">طلب جديد</button>
+      </div>
+      <div id="customerStats" class="stats"></div>
+      <div class="content-grid">
+        <div class="card">
+          <h3>طلباتي</h3>
+          <div id="customerRequests" class="request-list"></div>
+        </div>
+        <div id="requestFormCard" class="card hidden">
+          <h3>إنشاء طلب خدمة</h3>
+          <form id="requestForm" class="form">
+            <label>نوع الخدمة
+              <select id="serviceType" required></select>
+            </label>
+            <label>المنطقة
+              <input id="area" value="جرمانا" required>
+            </label>
+            <label>وصف المشكلة
+              <textarea id="description" rows="4" required placeholder="اشرح المشكلة بالتفصيل..."></textarea>
+            </label>
+            <label>الوقت المناسب
+              <select id="preferredTime" required>
+                <option>اليوم صباحًا</option><option>اليوم مساءً</option><option>غدًا</option><option>حسب تواصل الفني</option>
+              </select>
+            </label>
+            <label>رابط صورة (اختياري)
+              <input id="imageUrl" type="url" placeholder="https://...">
+            </label>
+            <div class="form-actions"><button type="submit" class="button primary">نشر الطلب</button><button type="button" class="button ghost" id="cancelRequestButton">إلغاء</button></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="technicianView" class="hidden">
+      <div class="page-heading">
+        <div><span class="eyebrow">لوحة الفني</span><h2>طلبات مناسبة لخدماتك</h2></div>
+        <button class="button secondary" id="topUpButton">شحن الرصيد</button>
+      </div>
+      <div id="technicianStats" class="stats"></div>
+      <div class="notice">أول 4 طلبات مؤهلة لفتح بيانات التواصل مجانية. بعدها يخصم فتح بيانات الطلب <strong>10,000 ل.س</strong> من رصيدك.</div>
+      <div class="content-grid">
+        <div class="card"><h3>الطلبات المتاحة</h3><div id="availableRequests" class="request-list"></div></div>
+        <div class="card"><h3>طلباتي المفتوحة</h3><div id="technicianRequests" class="request-list"></div></div>
+      </div>
+    </section>
+
+    <section id="adminView" class="hidden">
+      <div class="page-heading"><div><span class="eyebrow">لوحة الإدارة</span><h2>متابعة المنصة</h2></div></div>
+      <div id="adminStats" class="stats"></div>
+      <div class="card"><h3>كل الطلبات</h3><div id="adminRequests" class="request-list"></div></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="app.js"></script>
+</body>
+</html>
