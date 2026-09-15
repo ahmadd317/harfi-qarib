@@ -36,16 +36,19 @@
           <button class="tab" data-auth-tab="register">حساب جديد</button>
         </div>
         <form id="loginForm" class="form">
-          <label>رقم الهاتف أو البريد
-            <input id="loginIdentifier" required placeholder="مثال: customer@example.com">
+          <label>البريد الإلكتروني
+            <input id="loginIdentifier" type="email" required placeholder="name@example.com">
           </label>
           <label>كلمة المرور
             <input id="loginPassword" type="password" required placeholder="123456">
           </label>
           <button class="button primary" type="submit">دخول</button>
-          <p class="hint">للتجربة: customer@example.com أو technician@example.com / 123456</p>
+          <p class="hint">يجب تأكيد البريد الإلكتروني إذا فعّلته إعدادات Supabase.</p>
         </form>
         <form id="registerForm" class="form hidden">
+          <label>البريد الإلكتروني
+            <input id="registerEmail" type="email" required placeholder="name@example.com">
+          </label>
           <label>الاسم الكامل
             <input id="registerName" required>
           </label>
@@ -65,6 +68,20 @@
         </form>
         <div id="authMessage" class="message hidden"></div>
       </div>
+    </section>
+
+    <section id="setupView" class="card setup hidden">
+      <h2>يلزم إعداد Supabase</h2>
+      <p>التطبيق جاهز، لكن لم تتم إضافة عنوان مشروع Supabase ومفتاح anon العام بعد.</p>
+      <ol>
+        <li>أنشئ مشروعًا في Supabase وشغّل ملف <code>supabase-schema.sql</code>.</li>
+        <li>انسخ <code>config.example.js</code> إلى <code>config.js</code> وضع قيم <code>window.HARFI_CONFIG</code> العامة.</li>
+        <li>انشر ملفات المشروع على Vercel كـ Static Site. التفاصيل في README.</li>
+      </ol>
+      <pre>window.HARFI_CONFIG = {
+  supabaseUrl: "https://YOUR_PROJECT.supabase.co",
+  supabaseAnonKey: "YOUR_PUBLIC_ANON_KEY"
+};</pre>
     </section>
 
     <section id="customerView" class="hidden">
@@ -98,6 +115,9 @@
             <label>رابط صورة (اختياري)
               <input id="imageUrl" type="url" placeholder="https://...">
             </label>
+            <label>أو ارفع صورة
+              <input id="imageFile" type="file" accept="image/*">
+            </label>
             <div class="form-actions"><button type="submit" class="button primary">نشر الطلب</button><button type="button" class="button ghost" id="cancelRequestButton">إلغاء</button></div>
           </form>
         </div>
@@ -115,16 +135,31 @@
         <div class="card"><h3>الطلبات المتاحة</h3><div id="availableRequests" class="request-list"></div></div>
         <div class="card"><h3>طلباتي المفتوحة</h3><div id="technicianRequests" class="request-list"></div></div>
       </div>
+      <div id="topUpCard" class="card hidden">
+        <h3>طلب شحن رصيد عبر شام كاش</h3>
+        <form id="topUpForm" class="form">
+          <label>المبلغ بالليرة السورية<input id="topUpAmount" type="number" min="1000" step="1000" required></label>
+          <label>صورة الإيصال<input id="topUpReceipt" type="file" accept="image/*,.pdf" required></label>
+          <button class="button secondary" type="submit">إرسال الإيصال للمراجعة</button>
+        </form>
+        <p class="hint">سيبقى الطلب معلّقًا حتى يراجعه مدير المنصة.</p>
+      </div>
     </section>
 
     <section id="adminView" class="hidden">
       <div class="page-heading"><div><span class="eyebrow">لوحة الإدارة</span><h2>متابعة المنصة</h2></div></div>
       <div id="adminStats" class="stats"></div>
       <div class="card"><h3>كل الطلبات</h3><div id="adminRequests" class="request-list"></div></div>
+      <div class="content-grid admin-grid">
+        <div class="card"><h3>المستخدمون</h3><div id="adminUsers" class="request-list"></div></div>
+        <div class="card"><h3>إيصالات الشحن</h3><div id="adminReceipts" class="request-list"></div></div>
+      </div>
     </section>
   </main>
 
   <div id="toast" class="toast hidden"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
