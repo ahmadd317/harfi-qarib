@@ -151,7 +151,10 @@ async function register(event) {
   const { data, error } = await db.auth.signUp({
     email,
     password: $("registerPassword").value,
-    options: { data: { full_name: $("registerName").value.trim(), phone: $("registerPhone").value.trim(), role } }
+    options: {
+      emailRedirectTo: window.location.origin,
+      data: { full_name: $("registerName").value.trim(), phone: $("registerPhone").value.trim(), role }
+    }
   });
   if (error) return authError(error.message);
   $("registerForm").reset();
