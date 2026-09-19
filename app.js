@@ -211,8 +211,17 @@ function renderTechnician() {
 
 function renderAdmin() {
   $("adminView").classList.remove("hidden");
+  const pendingReceipts = adminReceipts.filter(receipt => receipt.status === "pending");
+  const notification = $("adminNotification");
+  notification.classList.toggle("hidden", pendingReceipts.length === 0);
+  notification.innerHTML = pendingReceipts.length
+    ? `<span>لديك ${pendingReceipts.length} إيصال شحن بانتظار المراجعة. تحقق من وصول التحويل عبر شام كاش ثم اعتمد الإيصال.</span><button class="button secondary" type="button" id="reviewReceiptsButton">عرض الإيصالات</button>`
+    : "";
+  if (pendingReceipts.length) {
+    $("reviewReceiptsButton").addEventListener("click", () => $("adminReceipts").scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
   $("adminStats").innerHTML = stat("المستخدمون", adminUsers.length) + stat("الطلبات", requests.length) +
-    stat("طلبات مكتملة", requests.filter(item => item.status === "completed").length);
+    stat("إيصالات بانتظار المراجعة", pendingReceipts.length);
   $("adminRequests").innerHTML = requests.length ? requests.map(requestCardForAdmin).join("") : empty("لا توجد طلبات.");
   $("adminUsers").innerHTML = adminUsers.length ? adminUsers.map(user => `<div class="request"><strong>${escapeHtml(user.full_name)}</strong><p>${escapeHtml(user.phone || "—")} · ${user.role === "technician" ? "فني" : user.role === "admin" ? "مدير" : "زبون"}</p></div>`).join("") : empty("لا يوجد مستخدمون.");
   $("adminReceipts").innerHTML = adminReceipts.length ? adminReceipts.map(receiptCardForAdmin).join("") : empty("لا توجد إيصالات.");
@@ -251,7 +260,8 @@ function requestCardForAdmin(request) {
 
 function receiptCardForAdmin(receipt) {
   const receiptUrl = safeUrl(receipt.receipt_url || "");
-  return `<div class="request"><p><strong>${Number(receipt.amount).toLocaleString()} ل.س</strong> · ${escapeHtml(receiptStatusLabel(receipt.status))}</p><p class="hint">${formatDate(receipt.created_at)}</p>${receiptUrl ? `<a href="${escapeHtml(receiptUrl)}" target="_blank" rel="noopener">عرض الإيصال</a>` : ""}${receipt.status === "pending" ? `<div class="request-actions"><button class="button secondary" data-action="approve-receipt" data-id="${receipt.id}">اعتماد</button><button class="button ghost" data-action="reject-receipt" data-id="${receipt.id}">رفض</button></div>` : ""}</div>`;
+  const technician = adminUsers.find(user => user.id === receipt.technician_id);
+  return `<div class="request"><p><strong>${escapeHtml(technician?.full_name || "فني غير معروف")}</strong> · ${Number(receipt.amount).toLocaleString()} ل.س · ${escapeHtml(receiptStatusLabel(receipt.status))}</p><p class="hint">${formatDate(receipt.created_at)}</p>${receiptUrl ? `<a href="${escapeHtml(receiptUrl)}" target="_blank" rel="noopener">عرض الإيصال</a>` : ""}${receipt.status === "pending" ? `<div class="request-actions"><button class="button secondary" data-action="approve-receipt" data-id="${receipt.id}">اعتماد</button><button class="button ghost" data-action="reject-receipt" data-id="${receipt.id}">رفض</button></div>` : ""}</div>`;
 }
 
 async function uploadFile(bucket, file, folder) {
